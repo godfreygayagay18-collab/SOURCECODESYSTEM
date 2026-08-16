@@ -3,7 +3,6 @@ include('db.php');
 session_start();
 
 $get_codes = mysqli_query($conn, "SELECT * FROM source_codes ORDER BY id DESC");
-
 $is_logged_in = (isset($_SESSION['admin']) || isset($_SESSION['user']));
 ?>
 <!DOCTYPE html>
