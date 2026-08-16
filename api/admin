@@ -1,0 +1,89 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+api_require_admin();
+
+$resource = $_GET['resource'] ?? '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $resource === 'users') {
+    $status = trim($_GET['status'] ?? '');
+
+    if ($status !== '') {
+        $stmt = mysqli_prepare(
+            $conn,
+            "SELECT id, username, firstname, lastname, address, school_attended, mobile_email, status, created_at
+             FROM users WHERE status = ? ORDER BY created_at DESC"
+        );
+        mysqli_stmt_bind_param($stmt, "s", $status);
+    } else {
+        $stmt = mysqli_prepare(
+            $conn,
+            "SELECT id, username, firstname, lastname, address, school_attended, mobile_email, status, created_at
+             FROM users ORDER BY created_at DESC"
+        );
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $items = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $items[] = $row;
+    }
+    api_response(true, $items);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $resource === 'requests') {
+    $stmt = mysqli_query(
+        $conn,
+        "SELECT dr.id, dr.user_username, dr.code_id, sc.title, dr.gcash_ref, dr.status, dr.created_at
+         FROM download_requests dr
+         LEFT JOIN source_codes sc ON sc.id = dr.code_id
+         ORDER BY dr.created_at DESC"
+    );
+
+    $items = [];
+    while ($row = mysqli_fetch_assoc($stmt)) {
+        $items[] = $row;
+    }
+    api_response(true, $items);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $resource === 'approve_user') {
+    $input = api_input();
+    $user_id = intval($input['user_id'] ?? 0);
+    if ($user_id <= 0) {
+        api_error('user_id is required.');
+    }
+    $stmt = mysqli_prepare($conn, "UPDATE users SET status = 'approved' WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt) ? api_response(true, null, 'User approved.') : api_error('Failed to approve user.', 500);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $resource === 'reject_user') {
+    $input = api_input();
+    $user_id = intval($input['user_id'] ?? 0);
+    if ($user_id <= 0) {
+        api_error('user_id is required.');
+    }
+    $stmt = mysqli_prepare($conn, "UPDATE users SET status = 'rejected' WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt) ? api_response(true, null, 'User rejected.') : api_error('Failed to reject user.', 500);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $resource === 'update_request_status') {
+    $input = api_input();
+    $request_id = intval($input['request_id'] ?? 0);
+    $status = trim($input['status'] ?? '');
+    $allowed = ['Pending', 'Approved', 'Rejected'];
+
+    if ($request_id <= 0 || !in_array($status, $allowed, true)) {
+        api_error('request_id and a valid status (Pending, Approved, Rejected) are required.');
+    }
+
+    $stmt = mysqli_prepare($conn, "UPDATE download_requests SET status = ? WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "si", $status, $request_id);
+    mysqli_stmt_execute($stmt) ? api_response(true, null, 'Request status updated.') : api_error('Failed to update request.', 500);
+}
+
+api_error('Unknown resource or method.', 404);
+?>
