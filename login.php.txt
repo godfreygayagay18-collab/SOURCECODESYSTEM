@@ -24,7 +24,7 @@ if (isset($_POST['login'])) {
             }
             
             if (isset($user['status']) && $user['status'] == 'pending') {
-                $message = "<div class='alert alert-warning text-center fw-bold py-2 mb-3' style='font-size: 13px;'>⚠️ you cant login yet. your account is not approved by the Admin.</div>";
+                $message = "<div class='alert alert-warning text-center fw-bold py-2 mb-3' style='font-size: 13px;'> you cant login yet. your account is not approved by the Admin.</div>";
             } else {
                 $_SESSION['user'] = $user['username'];
                 header('Location: index.php'); 
