@@ -2,6 +2,7 @@
 include('db.php');
 session_start();
 $message = "";
+
 if (isset($_POST['signup'])) {
     $username = mysqli_real_escape_string($conn, trim($_POST['username']));
     $firstname = mysqli_real_escape_string($conn, trim($_POST['firstname']));
