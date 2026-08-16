@@ -1,7 +1,6 @@
 <?php
 include('db.php');
 session_start();
-
 $sender_id = 0;
 $receiver_id = intval($_POST['receiver_id'] ?? 0);
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
