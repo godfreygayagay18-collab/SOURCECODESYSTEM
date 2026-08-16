@@ -7,6 +7,7 @@ $receiver_id = intval($_POST['receiver_id'] ?? 0);
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 $file_path = NULL;
 
+
 if (isset($_SESSION['admin']) && $_SESSION['admin'] == 'GODFREY') {
     $sender_id = 1; 
 } elseif (isset($_SESSION['user_id'])) {
