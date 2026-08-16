@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
     header("Location: index.php");
     exit();
 }
-
 if (isset($_GET['code_id'])) {
     $code_id = intval($_GET['code_id']);
     $username = $_SESSION['user'];
