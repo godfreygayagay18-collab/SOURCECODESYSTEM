@@ -4,7 +4,6 @@ session_start();
 
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
 }
-
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 2; 
 $admin_id = 1; 
 ?>
