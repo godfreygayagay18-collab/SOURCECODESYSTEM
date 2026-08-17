@@ -7,11 +7,16 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-if (isset($_GET['approve_id'])) {
-    $id = intval($_GET['approve_id']);
-    mysqli_query($conn, "UPDATE download_requests SET status = 'Approved' WHERE id = '$id'");
-    header("Location: admin_requests.php");
-    exit();
+$requests = mysqli_query($conn, "SELECT r.id, r.user_username, r.status, r.gcash_ref, c.title FROM download_requests r JOIN source_codes c ON r.code_id = c.id WHERE r.status = 'Pending' ORDER BY r.id DESC");
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    $requests = mysqli_query($conn, "SELECT r.id, r.user_username, r.status, r.gcash_ref, c.title FROM download_requests r JOIN source_codes c ON r.code_id = c.id WHERE r.status = 'Pending' ORDER BY r.id DESC");
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 }
 
 $requests = mysqli_query($conn, "SELECT r.id, r.user_username, r.status, r.gcash_ref, c.title FROM download_requests r JOIN source_codes c ON r.code_id = c.id WHERE r.status = 'Pending' ORDER BY r.id DESC");
