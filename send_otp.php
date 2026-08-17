@@ -9,8 +9,11 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($_POST['email'])) {
-    $username = strtoupper(trim($_POST['username']));
+   
+    $username = trim($_POST['username']);
     $input_email = trim($_POST['email']);
 
     if (empty($input_email) || !filter_var($input_email, FILTER_VALIDATE_EMAIL)) {
@@ -56,12 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($
 
             $mail->send();
             echo json_encode(['status' => 'success', 'message' => 'OTP has been sent to your Gmail!']);
+            exit;
         } catch (Exception $e) {
             echo json_encode(['status' => 'error', 'message' => "Mailer Error: " . $mail->ErrorInfo]);
+            exit;
         }
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Username and Gmail address do not match.']);
+        exit;
     }
 }
 ?>
-```[cite: 6]
