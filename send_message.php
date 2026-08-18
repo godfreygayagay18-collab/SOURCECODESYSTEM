@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file_path = $target_file;
         }
     }
-
     if ($receiver_id > 0 && (!empty($message) || !empty($file_path))) {
         $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, message, file_path, is_read) VALUES (?, ?, ?, ?, 0)");
         $stmt->bind_param("iiss", $sender_id, $receiver_id, $message, $file_path);
